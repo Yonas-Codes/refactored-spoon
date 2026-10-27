@@ -8,16 +8,15 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <div class="max-w-md mx-auto w-full p-4 flex-1 flex flex-col justify-center">
-        <header class="text-center mb-6">
+    <div class="max-w-md mx-auto w-full p-4 flex-1 flex flex-col pb-12">
+        <header class="text-center my-4">
             <h1 class="text-2xl font-bold text-emerald-400">Reseller Ledger</h1>
-            <p class="text-xs text-slate-400 mt-1">Connected to Firebase Cloud</p>
+            <p class="text-xs text-slate-400 mt-0.5">Cloud Inventory & Finance</p>
         </header>
 
         <!-- Auth View -->
-        <div id="auth-container" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+        <div id="auth-container" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl my-auto">
             <h2 id="auth-title" class="text-lg font-semibold mb-4 text-center">Sign In to Your Ledger</h2>
-            
             <div id="error-msg" class="hidden bg-red-950/50 border border-red-800 text-red-300 text-xs p-3 rounded-lg mb-4"></div>
 
             <form id="auth-form" class="space-y-4">
@@ -37,42 +36,122 @@
             </div>
         </div>
 
-        <!-- Ledger Dashboard (Hidden by Default) -->
+        <!-- Dashboard View -->
         <div id="dashboard-container" class="hidden space-y-4">
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
-                <div>
-                    <p class="text-xs text-slate-400">Logged in as:</p>
-                    <p id="user-email-display" class="text-sm font-medium text-emerald-400 truncate max-w-[200px]"></p>
+            <!-- Top bar -->
+            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                <span id="user-email-display" class="text-emerald-400 font-medium truncate max-w-[200px]"></span>
+                <button id="logout-btn" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Sign Out</button>
+            </div>
+
+            <!-- Two Separate Financial Displays -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Business Profit</p>
+                    <h2 class="text-lg font-bold text-emerald-400 mt-1" id="net-profit">ETB 0.00</h2>
                 </div>
-                <button id="logout-btn" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Sign Out</button>
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Daily Expenses</p>
+                    <h2 class="text-lg font-bold text-red-400 mt-1" id="total-expenses">ETB 0.00</h2>
+                </div>
             </div>
 
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center">
-                <p class="text-xs text-slate-400 uppercase tracking-wider">Current Balance</p>
-                <h2 class="text-3xl font-bold text-emerald-400 mt-1" id="net-balance">ETB 0.00</h2>
+            <!-- Two Big Main Action Icons -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="openModal('store-modal')" class="bg-gradient-to-br from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 p-5 rounded-2xl border border-emerald-500/30 shadow-lg flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <span class="text-2xl mb-1">📦</span>
+                    <span class="font-bold text-sm text-white">My Store</span>
+                    <span class="text-[10px] text-emerald-200 mt-0.5">Manage Catalog</span>
+                </button>
+                <button onclick="openModal('sell-modal')" class="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 p-5 rounded-2xl border border-blue-500/30 shadow-lg flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <span class="text-2xl mb-1">⚡</span>
+                    <span class="font-bold text-sm text-white">Sell Item</span>
+                    <span class="text-[10px] text-blue-200 mt-0.5">Quick Checkout</span>
+                </button>
             </div>
 
+            <!-- Expense Section -->
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                <h3 class="text-sm font-semibold mb-3">Add Transaction</h3>
-                <form id="transaction-form" class="space-y-3">
+                <h3 class="text-xs font-semibold mb-2.5 text-slate-300">Daily Non-Business Expense</h3>
+                <form id="expense-form" class="space-y-2.5">
                     <div class="flex gap-2">
-                        <select id="tx-type" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200">
-                            <option value="sale">Sale (+)</option>
-                            <option value="expense">Expense (-)</option>
-                        </select>
-                        <input type="text" id="tx-desc" placeholder="Item / Description" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="exp-desc" placeholder="What did you spend on? (e.g. Food, Taxi)" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                        <input type="number" id="exp-amount" placeholder="Amount (ETB)" required class="w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
                     </div>
-                    <input type="number" id="tx-amount" placeholder="Amount (ETB)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
-                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold py-2 rounded-xl text-xs">Save Transaction</button>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2 rounded-xl text-xs">Record Expense</button>
                 </form>
             </div>
 
+            <!-- Recent Sales & Expenses Feed -->
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                <h3 class="text-sm font-semibold mb-3">Recent Activity</h3>
-                <div id="tx-list" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-400">
-                    <p class="text-center py-4">No transactions yet.</p>
+                <h3 class="text-xs font-semibold mb-3 text-slate-300">Recent Activity Feed</h3>
+                <div id="activity-list" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-400">
+                    <p class="text-center py-4">No recent records yet.</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- My Store Modal / Catalog Page -->
+    <div id="store-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex flex-col justify-end sm:justify-center p-0 sm:p-4">
+        <div class="bg-slate-900 w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl border border-slate-800 p-5 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-base font-bold text-emerald-400">Store Inventory Catalog</h2>
+                <button onclick="closeModal('store-modal')" class="text-slate-400 hover:text-white text-sm bg-slate-800 px-3 py-1 rounded-lg">Close</button>
+            </div>
+
+            <!-- Add Item Form -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 mb-4">
+                <h4 class="text-xs font-semibold mb-2 text-slate-300">Add New Item to Store</h4>
+                <form id="add-item-form" class="space-y-2.5">
+                    <input type="text" id="item-name" placeholder="Item Name (e.g. Lenovo ThinkPad T480)" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                    <input type="number" id="item-cost" placeholder="Purchase Price (How much you bought it for in ETB)" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold py-2 rounded-xl text-xs">Add Item to Inventory</button>
+                </form>
+            </div>
+
+            <!-- Inventory List -->
+            <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="inventory-list">
+                <p class="text-center py-6 text-xs text-slate-500">Your store is empty.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Sell Modal -->
+    <div id="sell-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex flex-col justify-end sm:justify-center p-0 sm:p-4">
+        <div class="bg-slate-900 w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl border border-slate-800 p-5 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-base font-bold text-blue-400">Quick Sell Item</h2>
+                <button onclick="closeModal('sell-modal')" class="text-slate-400 hover:text-white text-sm bg-slate-800 px-3 py-1 rounded-lg">Close</button>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" id="sell-search" placeholder="Search available items..." oninput="filterSellList()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="sell-inventory-list">
+                <p class="text-center py-6 text-xs text-slate-500">No items available in stock.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark as Sold Price Prompt Modal -->
+    <div id="price-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 w-full max-w-sm rounded-2xl border border-slate-800 p-5">
+            <h3 class="text-sm font-bold text-emerald-400 mb-1">Complete Sale</h3>
+            <p id="prompt-item-name" class="text-xs text-slate-300 mb-3 font-medium"></p>
+            
+            <form id="confirm-sale-form" class="space-y-3">
+                <input type="hidden" id="sale-item-id">
+                <div>
+                    <label class="block text-[10px] text-slate-400 mb-1">Selling Price (ETB)</label>
+                    <input type="number" id="sale-price" placeholder="How much did you sell it for?" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeModal('price-modal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs">Cancel</button>
+                    <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold py-2 rounded-xl text-xs">Confirm Sale</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -80,9 +159,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your exact Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyCvUjmf03bDhhJhMDB1_518yRm8uDRZjoQ",
           authDomain: "my-store-app-d6f98.firebaseapp.com",
@@ -98,30 +176,28 @@
         const db = getFirestore(app);
 
         let isSignUp = false;
+        let cachedInventory = [];
 
-        const authContainer = document.getElementById('auth-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const authForm = document.getElementById('auth-form');
-        const authTitle = document.getElementById('auth-title');
-        const authBtn = document.getElementById('auth-btn');
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
         const toggleAuthBtn = document.getElementById('toggle-auth');
-        const errorMsg = document.getElementById('error-msg');
-        const logoutBtn = document.getElementById('logout-btn');
-        const userEmailDisplay = document.getElementById('user-email-display');
-        const transactionForm = document.getElementById('transaction-form');
-        const txList = document.getElementById('tx-list');
-        const netBalance = document.getElementById('net-balance');
-
         toggleAuthBtn.addEventListener('click', () => {
             isSignUp = !isSignUp;
-            authTitle.textContent = isSignUp ? 'Create New Account' : 'Sign In to Your Ledger';
-            authBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-title').textContent = isSignUp ? 'Create New Account' : 'Sign In to Your Ledger';
+            document.getElementById('auth-btn').textContent = isSignUp ? 'Sign Up' : 'Sign In';
             toggleAuthBtn.textContent = isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up';
-            errorMsg.classList.add('hidden');
+            document.getElementById('error-msg').classList.add('hidden');
         });
 
-        authForm.addEventListener('submit', async (e) => {
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const errorMsg = document.getElementById('error-msg');
             errorMsg.classList.add('hidden');
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -138,70 +214,233 @@
             }
         });
 
-        logoutBtn.addEventListener('click', () => signOut(auth));
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                authContainer.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
-                userEmailDisplay.textContent = user.email;
-                loadTransactions(user.uid);
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('dashboard-container').classList.remove('hidden');
+                document.getElementById('user-email-display').textContent = user.email;
+                loadUserData(user.uid);
             } else {
-                authContainer.classList.remove('hidden');
-                dashboardContainer.classList.add('hidden');
+                document.getElementById('auth-container').classList.remove('hidden');
+                document.getElementById('dashboard-container').classList.add('hidden');
             }
         });
 
-        transactionForm.addEventListener('submit', async (e) => {
+        // Add Inventory Item with Auto-Numbering Identifier
+        document.getElementById('add-item-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
             if (!user) return;
 
-            const type = document.getElementById('tx-type').value;
-            const description = document.getElementById('tx-desc').value;
-            const amount = parseFloat(document.getElementById('tx-amount').value);
+            const rawName = document.getElementById('item-name').value.trim();
+            const cost = parseFloat(document.getElementById('item-cost').value);
+
+            // Count how many items with this exact base name already exist in inventory for this user
+            const existingCount = cachedInventory.filter(item => item.baseName.toLowerCase() === rawName.toLowerCase()).length;
+            const identifierNumber = existingCount + 1;
+            const formattedName = `${rawName} (${identifierNumber})`;
 
             try {
-                await addDoc(collection(db, "transactions"), {
+                await addDoc(collection(db, "inventory"), {
                     uid: user.uid,
-                    type,
+                    baseName: rawName,
+                    name: formattedName,
+                    purchasePrice: cost,
+                    status: 'in-stock',
+                    createdAt: new Date()
+                });
+                document.getElementById('add-item-form').reset();
+            } catch (err) {
+                alert("Error adding item: " + err.message);
+            }
+        });
+
+        // Record Daily Expense
+        document.getElementById('expense-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const description = document.getElementById('exp-desc').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+
+            try {
+                await addDoc(collection(db, "expenses"), {
+                    uid: user.uid,
                     description,
                     amount,
                     createdAt: new Date()
                 });
-                transactionForm.reset();
+                document.getElementById('expense-form').reset();
             } catch (err) {
-                alert("Error saving transaction: " + err.message);
+                alert("Error recording expense: " + err.message);
             }
         });
 
-        function loadTransactions(uid) {
-            const q = query(collection(db, "transactions"), where("uid", "==", uid));
-            onSnapshot(q, (snapshot) => {
-                let total = 0;
-                let html = "";
-                const docs = snapshot.docs;
-                
-                if (docs.length === 0) {
-                    txList.innerHTML = `<p class="text-center py-4">No transactions yet.</p>`;
-                    netBalance.textContent = "ETB 0.00";
-                    return;
-                }
+        // Prompt Sale Price
+        window.promptSale = function(id, name) {
+            document.getElementById('sale-item-id').value = id;
+            document.getElementById('prompt-item-name').textContent = `Item: ${name}`;
+            document.getElementById('sale-price').value = '';
+            closeModal('sell-modal');
+            openModal('price-modal');
+        }
 
-                docs.forEach((docSnap) => {
-                    const tx = docSnap.data();
-                    if (tx.type === 'sale') {
-                        total += tx.amount;
-                        html += `<div class="flex justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800"><span>${tx.description}</span><span class="text-emerald-400 font-semibold">+${tx.amount} ETB</span></div>`;
-                    } else {
-                        total -= tx.amount;
-                        html += `<div class="flex justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800"><span>${tx.description}</span><span class="text-red-400 font-semibold">-${tx.amount} ETB</span></div>`;
-                    }
+        // Confirm Sale
+        document.getElementById('confirm-sale-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const itemId = document.getElementById('sale-item-id').value;
+            const salePrice = parseFloat(document.getElementById('sale-price').value);
+
+            const item = cachedInventory.find(i => i.id === itemId);
+            if (!item) return;
+
+            const profit = salePrice - item.purchasePrice;
+
+            try {
+                // Update item status to sold
+                await updateDoc(doc(db, "inventory", itemId), {
+                    status: 'sold',
+                    salePrice: salePrice,
+                    profit: profit
                 });
 
-                netBalance.textContent = `ETB ${total.toFixed(2)}`;
-                txList.innerHTML = html;
+                // Add to transactions/sales history log
+                await addDoc(collection(db, "sales"), {
+                    uid: user.uid,
+                    itemName: item.name,
+                    purchasePrice: item.purchasePrice,
+                    salePrice: salePrice,
+                    profit: profit,
+                    createdAt: new Date()
+                });
+
+                closeModal('price-modal');
+            } catch (err) {
+                alert("Error completing sale: " + err.message);
+            }
+        });
+
+        // Delete Item
+        window.deleteItem = async function(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                try {
+                    await deleteDoc(doc(db, "inventory", id));
+                } catch (err) {
+                    alert("Error deleting item: " + err.message);
+                }
+            }
+        }
+
+        // Real-time Data Listener
+        function loadUserData(uid) {
+            // Listen to Inventory
+            const invQuery = query(collection(db, "inventory"), where("uid", "==", uid));
+            onSnapshot(invQuery, (snapshot) => {
+                cachedInventory = [];
+                snapshot.forEach(docSnap => {
+                    cachedInventory.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderInventoryLists();
             });
+
+            // Listen to Sales for Profit calculation
+            const salesQuery = query(collection(db, "sales"), where("uid", "==", uid));
+            onSnapshot(salesQuery, (snapshot) => {
+                let totalProfit = 0;
+                let feedHtml = "";
+                snapshot.forEach(docSnap => {
+                    const sale = docSnap.data();
+                    totalProfit += sale.profit;
+                    feedHtml += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <div><p class="font-medium text-slate-200">Sold: ${sale.itemName}</p><p class="text-[10px] text-slate-500">Bought: ${sale.purchasePrice} | Sold: ${sale.salePrice}</p></div>
+                        <span class="text-emerald-400 font-semibold">+${sale.profit} ETB</span></div>`;
+                });
+                document.getElementById('net-profit').textContent = `ETB ${totalProfit.toFixed(2)}`;
+                updateActivityFeed(feedHtml);
+            });
+
+            // Listen to Expenses
+            const expQuery = query(collection(db, "expenses"), where("uid", "==", uid));
+            onSnapshot(expQuery, (snapshot) => {
+                let totalExpenses = 0;
+                let expFeedHtml = "";
+                snapshot.forEach(docSnap => {
+                    const exp = docSnap.data();
+                    totalExpenses += exp.amount;
+                    expFeedHtml += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-300">${exp.description}</span>
+                        <span class="text-red-400 font-semibold">-${exp.amount} ETB</span></div>`;
+                });
+                document.getElementById('total-expenses').textContent = `ETB ${totalExpenses.toFixed(2)}`;
+            });
+        }
+
+        function renderInventoryLists() {
+            const inventoryList = document.getElementById('inventory-list');
+            const sellInventoryList = document.getElementById('sell-inventory-list');
+            
+            const inStockItems = cachedInventory.filter(i => i.status === 'in-stock');
+
+            // 1. Render Store Catalog
+            if (cachedInventory.length === 0) {
+                inventoryList.innerHTML = `<p class="text-center py-6 text-xs text-slate-500">Your store is empty.</p>`;
+            } else {
+                inventoryList.innerHTML = cachedInventory.map(item => `
+                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <p class="font-medium text-slate-200 text-xs">${item.name}</p>
+                            <p class="text-[10px] text-slate-400">Cost: ${item.purchasePrice} ETB | <span class="${item.status === 'in-stock' ? 'text-emerald-400' : 'text-amber-400'}">${item.status.toUpperCase()}</span></p>
+                        </div>
+                        <div class="flex gap-1.5">
+                            ${item.status === 'in-stock' ? `<button onclick="promptSale('${item.id}', '${item.name}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors">Sold</button>` : ''}
+                            <button onclick="deleteItem('${item.id}')" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 2. Render Quick Sell Search List
+            if (inStockItems.length === 0) {
+                sellInventoryList.innerHTML = `<p class="text-center py-6 text-xs text-slate-500">No items available in stock.</p>`;
+            } else {
+                sellInventoryList.innerHTML = inStockItems.map(item => `
+                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 sell-item-card" data-name="${item.name.toLowerCase()}">
+                        <div>
+                            <p class="font-medium text-slate-200 text-xs">${item.name}</p>
+                            <p class="text-[10px] text-slate-400">Cost: ${item.purchasePrice} ETB</p>
+                        </div>
+                        <button onclick="promptSale('${item.id}', '${item.name}')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-semibold">Select to Sell</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.filterSellList = function() {
+            const queryText = document.getElementById('sell-search').value.toLowerCase();
+            const cards = document.querySelectorAll('.sell-item-card');
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(queryText)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function updateActivityFeed(salesHtml) {
+            const feed = document.getElementById('activity-list');
+            if (!salesHtml) {
+                feed.innerHTML = `<p class="text-center py-4 text-xs text-slate-500">No recent sales recorded.</p>`;
+            } else {
+                feed.innerHTML = salesHtml;
+            }
         }
     </script>
 </body>
