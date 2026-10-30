@@ -39,7 +39,7 @@
             </form>
 
             <div class="mt-4 text-center">
-                <button id="toggle-auth" class="text-xs text-emerald-400 hover:underline">Need an account? Sign Up</button>
+                <button type="button" id="toggle-auth" class="text-xs text-emerald-400 hover:underline">Need an account? Sign Up</button>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <!-- Financial Cards (Cash Balance, Profit, Expenses) -->
+            <!-- Financial Cards -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-slate-900 print-card p-3 rounded-2xl border border-slate-800 text-center">
                     <p class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Cash Balance</p>
@@ -288,7 +288,7 @@
                     status: 'in-stock',
                     createdAt: new Date()
                 });
-                document.getElementById('add-item-form'].reset();
+                document.getElementById('add-item-form').reset();
             } catch (err) {
                 alert("Error adding item: " + err.message);
             }
@@ -393,7 +393,6 @@
             if (confirm("Are you sure you want to delete this item?")) {
                 try {
                     await deleteDoc(doc(db, "inventory", id));
-                    // If it was sold, also remove corresponding sale log
                     if (status === 'sold') {
                         const saleDoc = cachedSales.find(s => s.itemId === id);
                         if (saleDoc) {
@@ -467,7 +466,6 @@
                 totalExpenses += (exp.amount || 0);
             });
 
-            // Cash Balance = Total Cash Received from Sales - Total Money Spent Buying Items - Total Daily Expenses
             const cashBalance = totalSalesRevenue - totalBuyCost - totalExpenses;
 
             document.getElementById('cash-balance').textContent = `ETB ${cashBalance.toFixed(2)}`;
