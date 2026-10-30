@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reseller Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-card { border: 1px solid #ccc !important; background: white !important; color: black !important; }
+        }
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
 
     <div class="max-w-md mx-auto w-full p-4 flex-1 flex flex-col pb-12">
-        <header class="text-center my-4">
+        <header class="text-center my-4 no-print">
             <h1 class="text-2xl font-bold text-emerald-400">Reseller Ledger</h1>
             <p class="text-xs text-slate-400 mt-0.5">Cloud Inventory & Finance</p>
         </header>
 
         <!-- Auth View -->
-        <div id="auth-container" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl my-auto">
+        <div id="auth-container" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl my-auto no-print">
             <h2 id="auth-title" class="text-lg font-semibold mb-4 text-center">Sign In to Your Ledger</h2>
             <div id="error-msg" class="hidden bg-red-950/50 border border-red-800 text-red-300 text-xs p-3 rounded-lg mb-4"></div>
 
@@ -39,43 +46,50 @@
         <!-- Dashboard View -->
         <div id="dashboard-container" class="hidden space-y-4">
             <!-- Top bar -->
-            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                <span id="user-email-display" class="text-emerald-400 font-medium truncate max-w-[200px]"></span>
-                <button id="logout-btn" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Sign Out</button>
-            </div>
-
-            <!-- Two Separate Financial Displays -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Business Profit</p>
-                    <h2 class="text-lg font-bold text-emerald-400 mt-1" id="net-profit">ETB 0.00</h2>
-                </div>
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Daily Expenses</p>
-                    <h2 class="text-lg font-bold text-red-400 mt-1" id="total-expenses">ETB 0.00</h2>
+            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs no-print">
+                <span id="user-email-display" class="text-emerald-400 font-medium truncate max-w-[180px]"></span>
+                <div class="flex gap-2">
+                    <button onclick="window.print()" class="bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white px-2.5 py-1.5 rounded-lg font-semibold">📄 Save PDF</button>
+                    <button id="logout-btn" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Sign Out</button>
                 </div>
             </div>
 
-            <!-- Two Big Main Action Icons -->
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="openModal('store-modal')" class="bg-gradient-to-br from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 p-5 rounded-2xl border border-emerald-500/30 shadow-lg flex flex-col items-center justify-center text-center transition-all active:scale-95">
-                    <span class="text-2xl mb-1">📦</span>
-                    <span class="font-bold text-sm text-white">My Store</span>
-                    <span class="text-[10px] text-emerald-200 mt-0.5">Manage Catalog</span>
+            <!-- Financial Cards (Cash Balance, Profit, Expenses) -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-slate-900 print-card p-3 rounded-2xl border border-slate-800 text-center">
+                    <p class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Cash Balance</p>
+                    <h2 class="text-sm sm:text-base font-bold text-cyan-400 mt-1" id="cash-balance">ETB 0.00</h2>
+                </div>
+                <div class="bg-slate-900 print-card p-3 rounded-2xl border border-slate-800 text-center">
+                    <p class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Net Profit</p>
+                    <h2 class="text-sm sm:text-base font-bold text-emerald-400 mt-1" id="net-profit">ETB 0.00</h2>
+                </div>
+                <div class="bg-slate-900 print-card p-3 rounded-2xl border border-slate-800 text-center">
+                    <p class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Expenses</p>
+                    <h2 class="text-sm sm:text-base font-bold text-red-400 mt-1" id="total-expenses">ETB 0.00</h2>
+                </div>
+            </div>
+
+            <!-- Two Much Larger Main Action Icons -->
+            <div class="grid grid-cols-2 gap-3 no-print">
+                <button onclick="openModal('store-modal')" class="bg-gradient-to-br from-emerald-600 to-emerald-900 hover:from-emerald-500 hover:to-emerald-800 p-6 rounded-2xl border border-emerald-500/40 shadow-xl flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <span class="text-4xl mb-2">📦</span>
+                    <span class="font-extrabold text-base text-white">My Store</span>
+                    <span class="text-xs text-emerald-200 mt-1">Catalog & Inventory</span>
                 </button>
-                <button onclick="openModal('sell-modal')" class="bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 p-5 rounded-2xl border border-blue-500/30 shadow-lg flex flex-col items-center justify-center text-center transition-all active:scale-95">
-                    <span class="text-2xl mb-1">⚡</span>
-                    <span class="font-bold text-sm text-white">Sell Item</span>
-                    <span class="text-[10px] text-blue-200 mt-0.5">Quick Checkout</span>
+                <button onclick="openModal('sell-modal')" class="bg-gradient-to-br from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 p-6 rounded-2xl border border-blue-500/40 shadow-xl flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <span class="text-4xl mb-2">⚡</span>
+                    <span class="font-extrabold text-base text-white">Sell Item</span>
+                    <span class="text-xs text-blue-200 mt-1">Quick Checkout</span>
                 </button>
             </div>
 
             <!-- Expense Section -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                <h3 class="text-xs font-semibold mb-2.5 text-slate-300">Daily Non-Business Expense</h3>
+            <div class="bg-slate-900 print-card p-4 rounded-2xl border border-slate-800 no-print">
+                <h3 class="text-xs font-semibold mb-2.5 text-slate-300">Daily Non-Business Expense (Subtracts from Cash)</h3>
                 <form id="expense-form" class="space-y-2.5">
                     <div class="flex gap-2">
-                        <input type="text" id="exp-desc" placeholder="What did you spend on? (e.g. Food, Taxi)" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="exp-desc" placeholder="Expense (e.g. Food, Transport)" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
                         <input type="number" id="exp-amount" placeholder="Amount (ETB)" required class="w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
                     </div>
                     <button type="submit" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2 rounded-xl text-xs">Record Expense</button>
@@ -83,10 +97,10 @@
             </div>
 
             <!-- Recent Sales & Expenses Feed -->
-            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                <h3 class="text-xs font-semibold mb-3 text-slate-300">Recent Activity Feed</h3>
-                <div id="activity-list" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-400">
-                    <p class="text-center py-4">No recent records yet.</p>
+            <div class="bg-slate-900 print-card p-4 rounded-2xl border border-slate-800">
+                <h3 class="text-xs font-semibold mb-3 text-slate-300">Activity History & Ledger Feed</h3>
+                <div id="activity-list" class="space-y-2 max-h-56 overflow-y-auto text-xs text-slate-400">
+                    <p class="text-center py-4">No records yet.</p>
                 </div>
             </div>
         </div>
@@ -102,10 +116,10 @@
 
             <!-- Add Item Form -->
             <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 mb-4">
-                <h4 class="text-xs font-semibold mb-2 text-slate-300">Add New Item to Store</h4>
+                <h4 class="text-xs font-semibold mb-2 text-slate-300">Add New Item to Store (Subtracts Buy Cost from Cash)</h4>
                 <form id="add-item-form" class="space-y-2.5">
                     <input type="text" id="item-name" placeholder="Item Name (e.g. Lenovo ThinkPad T480)" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
-                    <input type="number" id="item-cost" placeholder="Purchase Price (How much you bought it for in ETB)" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                    <input type="number" id="item-cost" placeholder="Purchase Price / Buy Cost (ETB)" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
                     <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold py-2 rounded-xl text-xs">Add Item to Inventory</button>
                 </form>
             </div>
@@ -135,6 +149,28 @@
         </div>
     </div>
 
+    <!-- Edit Item Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 w-full max-w-sm rounded-2xl border border-slate-800 p-5">
+            <h3 class="text-sm font-bold text-emerald-400 mb-3">Edit Inventory Item</h3>
+            <form id="edit-item-form" class="space-y-3">
+                <input type="hidden" id="edit-item-id">
+                <div>
+                    <label class="block text-[10px] text-slate-400 mb-1">Item Name</label>
+                    <input type="text" id="edit-item-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 mb-1">Purchase Price (ETB)</label>
+                    <input type="number" id="edit-item-cost" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeModal('edit-modal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs">Cancel</button>
+                    <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold py-2 rounded-xl text-xs">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Mark as Sold Price Prompt Modal -->
     <div id="price-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 w-full max-w-sm rounded-2xl border border-slate-800 p-5">
@@ -144,7 +180,7 @@
             <form id="confirm-sale-form" class="space-y-3">
                 <input type="hidden" id="sale-item-id">
                 <div>
-                    <label class="block text-[10px] text-slate-400 mb-1">Selling Price (ETB)</label>
+                    <label class="block text-[10px] text-slate-400 mb-1">Selling Price (ETB) - Adds Cash</label>
                     <input type="number" id="sale-price" placeholder="How much did you sell it for?" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
                 </div>
                 <div class="flex gap-2">
@@ -177,6 +213,8 @@
 
         let isSignUp = false;
         let cachedInventory = [];
+        let cachedSales = [];
+        let cachedExpenses = [];
 
         window.openModal = function(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -237,8 +275,7 @@
             const rawName = document.getElementById('item-name').value.trim();
             const cost = parseFloat(document.getElementById('item-cost').value);
 
-            // Count how many items with this exact base name already exist in inventory for this user
-            const existingCount = cachedInventory.filter(item => item.baseName.toLowerCase() === rawName.toLowerCase()).length;
+            const existingCount = cachedInventory.filter(item => item.baseName && item.baseName.toLowerCase() === rawName.toLowerCase()).length;
             const identifierNumber = existingCount + 1;
             const formattedName = `${rawName} (${identifierNumber})`;
 
@@ -251,7 +288,7 @@
                     status: 'in-stock',
                     createdAt: new Date()
                 });
-                document.getElementById('add-item-form').reset();
+                document.getElementById('add-item-form'].reset();
             } catch (err) {
                 alert("Error adding item: " + err.message);
             }
@@ -279,6 +316,32 @@
             }
         });
 
+        // Open Edit Item Modal
+        window.openEditItem = function(id, name, cost) {
+            document.getElementById('edit-item-id').value = id;
+            document.getElementById('edit-item-name').value = name;
+            document.getElementById('edit-item-cost').value = cost;
+            openModal('edit-modal');
+        }
+
+        // Save Edited Item
+        document.getElementById('edit-item-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-item-id').value;
+            const newName = document.getElementById('edit-item-name').value;
+            const newCost = parseFloat(document.getElementById('edit-item-cost').value);
+
+            try {
+                await updateDoc(doc(db, "inventory", id), {
+                    name: newName,
+                    purchasePrice: newCost
+                });
+                closeModal('edit-modal');
+            } catch (err) {
+                alert("Error updating item: " + err.message);
+            }
+        });
+
         // Prompt Sale Price
         window.promptSale = function(id, name) {
             document.getElementById('sale-item-id').value = id;
@@ -303,16 +366,15 @@
             const profit = salePrice - item.purchasePrice;
 
             try {
-                // Update item status to sold
                 await updateDoc(doc(db, "inventory", itemId), {
                     status: 'sold',
                     salePrice: salePrice,
                     profit: profit
                 });
 
-                // Add to transactions/sales history log
                 await addDoc(collection(db, "sales"), {
                     uid: user.uid,
+                    itemId: itemId,
                     itemName: item.name,
                     purchasePrice: item.purchasePrice,
                     salePrice: salePrice,
@@ -326,68 +388,100 @@
             }
         });
 
-        // Delete Item
-        window.deleteItem = async function(id) {
+        // Delete Item or Revert Sale
+        window.deleteItem = async function(id, status) {
             if (confirm("Are you sure you want to delete this item?")) {
                 try {
                     await deleteDoc(doc(db, "inventory", id));
+                    // If it was sold, also remove corresponding sale log
+                    if (status === 'sold') {
+                        const saleDoc = cachedSales.find(s => s.itemId === id);
+                        if (saleDoc) {
+                            await deleteDoc(doc(db, "sales", saleDoc.id));
+                        }
+                    }
                 } catch (err) {
                     alert("Error deleting item: " + err.message);
                 }
             }
         }
 
+        // Delete Expense
+        window.deleteExpense = async function(id) {
+            if (confirm("Delete this expense record?")) {
+                try {
+                    await deleteDoc(doc(db, "expenses", id));
+                } catch (err) {
+                    alert("Error deleting expense: " + err.message);
+                }
+            }
+        }
+
         // Real-time Data Listener
         function loadUserData(uid) {
-            // Listen to Inventory
             const invQuery = query(collection(db, "inventory"), where("uid", "==", uid));
             onSnapshot(invQuery, (snapshot) => {
                 cachedInventory = [];
                 snapshot.forEach(docSnap => {
                     cachedInventory.push({ id: docSnap.id, ...docSnap.data() });
                 });
+                recalculateFinancials();
                 renderInventoryLists();
             });
 
-            // Listen to Sales for Profit calculation
             const salesQuery = query(collection(db, "sales"), where("uid", "==", uid));
             onSnapshot(salesQuery, (snapshot) => {
-                let totalProfit = 0;
-                let feedHtml = "";
+                cachedSales = [];
                 snapshot.forEach(docSnap => {
-                    const sale = docSnap.data();
-                    totalProfit += sale.profit;
-                    feedHtml += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <div><p class="font-medium text-slate-200">Sold: ${sale.itemName}</p><p class="text-[10px] text-slate-500">Bought: ${sale.purchasePrice} | Sold: ${sale.salePrice}</p></div>
-                        <span class="text-emerald-400 font-semibold">+${sale.profit} ETB</span></div>`;
+                    cachedSales.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                document.getElementById('net-profit').textContent = `ETB ${totalProfit.toFixed(2)}`;
-                updateActivityFeed(feedHtml);
+                recalculateFinancials();
             });
 
-            // Listen to Expenses
             const expQuery = query(collection(db, "expenses"), where("uid", "==", uid));
             onSnapshot(expQuery, (snapshot) => {
-                let totalExpenses = 0;
-                let expFeedHtml = "";
+                cachedExpenses = [];
                 snapshot.forEach(docSnap => {
-                    const exp = docSnap.data();
-                    totalExpenses += exp.amount;
-                    expFeedHtml += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-slate-300">${exp.description}</span>
-                        <span class="text-red-400 font-semibold">-${exp.amount} ETB</span></div>`;
+                    cachedExpenses.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                document.getElementById('total-expenses').textContent = `ETB ${totalExpenses.toFixed(2)}`;
+                recalculateFinancials();
             });
+        }
+
+        function recalculateFinancials() {
+            let totalProfit = 0;
+            let totalSalesRevenue = 0;
+            let totalBuyCost = 0;
+            let totalExpenses = 0;
+
+            cachedSales.forEach(sale => {
+                totalProfit += (sale.profit || 0);
+                totalSalesRevenue += (sale.salePrice || 0);
+            });
+
+            cachedInventory.forEach(item => {
+                totalBuyCost += (item.purchasePrice || 0);
+            });
+
+            cachedExpenses.forEach(exp => {
+                totalExpenses += (exp.amount || 0);
+            });
+
+            // Cash Balance = Total Cash Received from Sales - Total Money Spent Buying Items - Total Daily Expenses
+            const cashBalance = totalSalesRevenue - totalBuyCost - totalExpenses;
+
+            document.getElementById('cash-balance').textContent = `ETB ${cashBalance.toFixed(2)}`;
+            document.getElementById('net-profit').textContent = `ETB ${totalProfit.toFixed(2)}`;
+            document.getElementById('total-expenses').textContent = `ETB ${totalExpenses.toFixed(2)}`;
+
+            renderActivityFeed();
         }
 
         function renderInventoryLists() {
             const inventoryList = document.getElementById('inventory-list');
             const sellInventoryList = document.getElementById('sell-inventory-list');
-            
             const inStockItems = cachedInventory.filter(i => i.status === 'in-stock');
 
-            // 1. Render Store Catalog
             if (cachedInventory.length === 0) {
                 inventoryList.innerHTML = `<p class="text-center py-6 text-xs text-slate-500">Your store is empty.</p>`;
             } else {
@@ -398,14 +492,14 @@
                             <p class="text-[10px] text-slate-400">Cost: ${item.purchasePrice} ETB | <span class="${item.status === 'in-stock' ? 'text-emerald-400' : 'text-amber-400'}">${item.status.toUpperCase()}</span></p>
                         </div>
                         <div class="flex gap-1.5">
-                            ${item.status === 'in-stock' ? `<button onclick="promptSale('${item.id}', '${item.name}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors">Sold</button>` : ''}
-                            <button onclick="deleteItem('${item.id}')" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors">Delete</button>
+                            <button onclick="openEditItem('${item.id}', '${item.name}', ${item.purchasePrice})" class="bg-slate-800 text-slate-300 hover:bg-slate-700 px-2 py-1 rounded-lg text-[10px] font-semibold">Edit</button>
+                            ${item.status === 'in-stock' ? `<button onclick="promptSale('${item.id}', '${item.name}')" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-2 py-1 rounded-lg text-[10px] font-semibold">Sold</button>` : ''}
+                            <button onclick="deleteItem('${item.id}', '${item.status}')" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-2 py-1 rounded-lg text-[10px] font-semibold">Delete</button>
                         </div>
                     </div>
                 `).join('');
             }
 
-            // 2. Render Quick Sell Search List
             if (inStockItems.length === 0) {
                 sellInventoryList.innerHTML = `<p class="text-center py-6 text-xs text-slate-500">No items available in stock.</p>`;
             } else {
@@ -434,12 +528,29 @@
             });
         }
 
-        function updateActivityFeed(salesHtml) {
+        function renderActivityFeed() {
             const feed = document.getElementById('activity-list');
-            if (!salesHtml) {
-                feed.innerHTML = `<p class="text-center py-4 text-xs text-slate-500">No recent sales recorded.</p>`;
+            let html = "";
+
+            cachedSales.forEach(sale => {
+                html += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                    <div><p class="font-medium text-slate-200">Sold: ${sale.itemName}</p><p class="text-[10px] text-slate-500">Cost: ${sale.purchasePrice} | Sold: ${sale.salePrice}</p></div>
+                    <span class="text-emerald-400 font-semibold">+${sale.profit} ETB</span></div>`;
+            });
+
+            cachedExpenses.forEach(exp => {
+                html += `<div class="flex justify-between items-center bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                    <div><p class="font-medium text-slate-300">Expense: ${exp.description}</p></div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-red-400 font-semibold">-${exp.amount} ETB</span>
+                        <button onclick="deleteExpense('${exp.id}')" class="text-slate-500 hover:text-red-400 text-[10px] no-print">✕</button>
+                    </div></div>`;
+            });
+
+            if (!html) {
+                feed.innerHTML = `<p class="text-center py-4 text-xs text-slate-500">No recent activity recorded.</p>`;
             } else {
-                feed.innerHTML = salesHtml;
+                feed.innerHTML = html;
             }
         }
     </script>
